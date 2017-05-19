@@ -1,0 +1,335 @@
+create table notar
+(
+  id_notara number(5) primary key,
+  ime varchar2(15) not null,
+  prezime varchar2(20) not null
+);
+
+
+create table pravni_zastupnik
+(
+    id_zastupnika number(5) primary key,
+    ime varchar2(15) not null,
+    prezime varchar2(20) not null,
+    mat_br number(13) not null unique,
+    naziv_agencije varchar2(30) not null,
+    grad varchar2(20),
+    ulica varchar2(25),
+    broj_u_ulici number(3)
+);
+
+create table klijenti
+(
+    id_klijenta number(5) primary key,
+    email_korisnika varchar2(30) not null unique,
+    password_korisnika varchar2(30) not null,
+    ime varchar2(15) not null,
+    prezime varchar2(20) not null,
+    grad varchar2(30) not null,
+    ulica varchar2(30) not null,
+    broj_u_ulici number(3) not null,
+    kupac_fleg number(1) not null,
+    prodavac_fleg number(1) not null
+);
+
+create table zaposleni
+(
+    id_zaposlenog number(5) primary key,
+    email_zaposlenog varchar2(30) not null unique,
+    password_zaposlenog varchar2(30) not null,
+    ime varchar2(15),
+    prezime varchar2(20),
+    staz number(2),
+    tip varchar2(10) not null, 
+	check(tip in('admin','agent'))
+);
+
+
+create table nekretnine
+(
+    id_nekretnine number(5) primary key,
+    datum_izgradnje date not null,
+    kvadratura number(4) not null,
+    cena number not null,
+    tip varchar2(15) not null,
+    opis varchar2(200),
+    sprat_broj varchar(15),
+    id_ugovora_o_zastupanju number not null,
+    u_ponudi_fleg number(1) default 1 not null,
+    grad varchar2(30) not null,
+    lokacija varchar2(30) not null,
+    ulica varchar2(30) not null,
+    broj number(3) not null,
+    opstina varchar2(30) not null,
+    br_parcele number(10) not null,
+    id_agenta number(5) not null,
+    id_vlasnika number(5) not null,
+    tip_ponude varchar2(10) not null,  //novo, virtualni fleg
+    tip_izdavanja varchar2(10),  // diskriminatorska prom
+    br_meseci number(2) not null, //glupo ako je za prodaju
+    fizicka_pravna_lica_fleg number(1),
+    od date,
+    do date,
+    godina number(4),
+
+    foreign key (id_agenta) references zaposleni(id_zaposlenog),
+    foreign key (id_vlasnika) references klijenti(id_klijenta),
+
+    check(tip_ponude in('izdavanje','prodaja')),
+    check(tip_izdavanja in('duzi','kraci', null))
+
+);
+
+
+create table fotografija
+(
+  id_foto number(5) primary key,
+  foto_path varchar2(100) not null,
+  id_nekretnine number(5),
+  foreign key (id_nekretnine) references nekretnine(id_nekretnine)
+);
+
+create table zastupa
+(
+    id_zastupa number(5) primary key,
+    id_klijenta number(5) not null,
+    id_zastupnika number(5) not null,
+    vazece_zastupnistvo_fleg number(1) default 1 not null,
+    foreign key (id_klijenta) references klijenti(id_klijenta),
+    foreign key (id_zastupnika) references pravni_zastupnik(id_zastupnika)
+);
+
+create table br_tel_klijenata
+(
+    id_br_tel number(5) primary key,
+    id_klijenta number(5) not null,
+    br_tel number(12) not null,
+    vazeci_fleg number(1) default 1 not null,
+    foreign key (id_klijenta) references klijenti(id_klijenta)
+);
+
+create table br_tel_zaposlenih
+(
+    id_br_tel number(5) primary key,
+    id_zaposlenog number(5) not null,
+    br_tel number(12) not null,
+    vazeci_fleg number(1) default 1 not null,
+    foreign key (id_zaposlenog) references zaposleni(id_zaposlenog)
+);
+
+create table ugovor
+(
+    id_ugovora number primary key,
+    dat_potpisivanja date not null,
+    bonus_agentu number(5,2) not null,
+    naknada_agenciji number(5,2) not null,
+    id_nekretnine number not null,
+    id_agenta number not null,
+    id_notara number not null,
+    id_zastupnika_kupca number,
+    id_zastupnika_prodavca number,
+    tip_ugovora varchar(20) not null,
+    od date,
+    do date,
+    mesecna_renta number(5,2),
+    osnovna_cena number (10,2),
+    naknada_notaru number(4,2), //treba da ide gore (u dujagramu) za svaki ugovor treba da postoji naknada o notaru, a ne samo za kupoprodajni
+    id_kupca_ili_zakupca number not null,
+    id_prodavca number not null,
+    foreign key (id_kupca_ili_zakupca) references klijenti(id_klijenta),
+    foreign key (id_prodavca) references klijenti(id_klijenta),
+    foreign key (id_agenta) references zaposleni(id_zaposlenog),
+    foreign key (id_notara) references notar(id_notara),
+    foreign key (id_nekretnine) references nekretnine(id_nekretnine),
+    foreign key (id_zastupnika_kupca) references pravni_zastupnik(id_zastupnika),
+    foreign key (id_zastupnika_prodavca) references pravni_zastupnik(id_zastupnika),
+
+    check (tip_ugovora in ('kupoprodajni','o_zakupu'))
+);
+
+
+
+
+
+
+
+CREATE SEQUENCE  FOTO_ID_SEQ  MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+CREATE SEQUENCE KLIJENT_BR_TEL_ID_SEQ  MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+CREATE SEQUENCE  KLIJENT_ID_SEQ  MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+CREATE SEQUENCE  NEKRETNINE_ID_SEQ  MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+CREATE SEQUENCE  NOTAR_ID_SEQ MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+CREATE SEQUENCE PRAVNI_ZASTUPNIK_ID_SEQ  MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+CREATE SEQUENCE  UGOVOR_ID_SEQ  MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+CREATE SEQUENCE  ZAPOSLENI_BR_TEL_ID_SEQ  MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+CREATE SEQUENCE  ZAPOSLENI_ID_SEQ  MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+CREATE SEQUENCE  ZASTUPA_ID_SEQ  MINVALUE 1 MAXVALUE 10000 INCREMENT BY 1 START WITH 1 CACHE 20 ORDER  NOCYCLE;
+
+
+
+
+create or replace TRIGGER ON_INSERT_BR_TEL_KLIJENTA
+BEFORE INSERT ON BR_TEL_KLIJENATA
+REFERENCING NEW AS novitelefon
+FOR EACH ROW 
+BEGIN
+  SELECT KLIJENT_BR_TEL_ID_SEQ.NEXTVAl INTO :novitelefon.ID_BR_TEL FROM DUAL;
+END;
+
+
+create or replace TRIGGER ON_INSERT_BR_TEL_ZAPOSLENIH
+BEFORE INSERT ON BR_TEL_ZAPOSLENIH
+REFERENCING NEW AS novitelefon
+FOR EACH ROW 
+BEGIN
+  SELECT ZAPOSLENI_BR_TEL_ID_SEQ.NEXTVAl INTO :novitelefon.ID_BR_TEL FROM DUAL;
+END;
+
+
+create or replace TRIGGER ON_INSERT_FOTO
+BEFORE INSERT ON FOTOGRAFIJA
+REFERENCING NEW AS novaslika
+FOR EACH ROW 
+BEGIN
+  SELECT FOTO_ID_SEQ.NEXTVAl INTO :novaslika.ID_FOTO FROM DUAL;
+END;
+
+
+create or replace TRIGGER ON_INSERT_KLIJENTI
+BEFORE INSERT ON KLIJENTI
+REFERENCING NEW AS noviklijent
+FOR EACH ROW 
+BEGIN
+  SELECT klijent_id_seq.NEXTVAl INTO :noviklijent.ID_KLIJENTA FROM DUAL;
+END;
+
+
+create or replace TRIGGER ON_INSERT_NEKRETNINA
+BEFORE INSERT ON NEKRETNINE
+REFERENCING NEW AS novanekretnina
+FOR EACH ROW 
+BEGIN
+  SELECT NEKRETNINE_ID_SEQ.NEXTVAl INTO :novanekretnina.ID_NEKRETNINE FROM DUAL;
+END;
+
+
+create or replace TRIGGER ON_INSERT_NOTAR
+BEFORE INSERT ON NOTAR
+REFERENCING NEW AS novinotar
+FOR EACH ROW 
+BEGIN
+  SELECT NOTAR_ID_SEQ.NEXTVAl INTO :novinotar.ID_NOTARA FROM DUAL;
+END;
+
+
+create or replace TRIGGER ON_INSERT_PRAVNI_ZASTUPNIK
+BEFORE INSERT ON PRAVNI_ZASTUPNIK
+REFERENCING NEW AS novipravnizastupnik
+FOR EACH ROW 
+BEGIN
+  SELECT PRAVNI_ZASTUPNIK_ID_SEQ.NEXTVAl INTO :novipravnizastupnik.ID_ZASTUPNIKA FROM DUAL;
+END;
+
+
+create or replace TRIGGER ON_INSERT_UGOVOR
+BEFORE INSERT ON UGOVOR
+REFERENCING NEW AS noviugovor
+FOR EACH ROW 
+BEGIN
+  SELECT UGOVOR_ID_SEQ.NEXTVAl INTO :noviugovor.ID_UGOVORA FROM DUAL;
+END;
+
+
+create or replace TRIGGER ON_INSERT_ZAPOSLENI
+BEFORE INSERT ON ZAPOSLENI
+REFERENCING NEW AS novizaposleni
+FOR EACH ROW 
+BEGIN
+  SELECT ZAPOSLENI_ID_SEQ.NEXTVAl INTO :novizaposleni.ID_ZAPOSLENOG FROM DUAL;
+END;
+
+
+create or replace TRIGGER ON_INSERT_ZASTUPA
+BEFORE INSERT ON ZASTUPA
+REFERENCING NEW AS novizastupa
+FOR EACH ROW 
+BEGIN
+  SELECT ZASTUPA_ID_SEQ.NEXTVAl INTO :novizastupa.ID_ZASTUPA FROM DUAL;
+END;
+
+
+
+//ove insert into naredbe ne valjaju jer postoje promene u bazi
+
+INSERT INTO KLIJENTI (EMAIL_KORISNIKA,PASSWORD_KORISNIKA,IME,PREZIME,GRAD,ULICA,BROJ_U_ULICI,KUPAC_FLEG,PRODAVAC_FLEG)
+VALUES('kupac@gmail.com', '123456','Milan', 'Urosevic','Krusevac', 'Vojvodjanska', 10, 1, 0);
+
+INSERT INTO KLIJENTI (EMAIL_KORISNIKA,PASSWORD_KORISNIKA,IME,PREZIME,GRAD,ULICA,BROJ_U_ULICI,KUPAC_FLEG,PRODAVAC_FLEG)
+VALUES('prodavac@gmail.com', '123456','Zoran', 'Pecic','Krusevac', '9. Brigade', 10, 0, 1);
+
+INSERT INTO KLIJENTI (EMAIL_KORISNIKA,PASSWORD_KORISNIKA,IME,PREZIME,GRAD,ULICA,BROJ_U_ULICI,KUPAC_FLEG,PRODAVAC_FLEG)
+VALUES('kupac-prodavac@gmail.com', '123456','Stefan', 'Mutavdzic','Krusevac', 'Travnicki Trg', 21, 1, 1);
+
+
+
+
+INSERT INTO BR_TEL_KLIJENATA (ID_KLIJENTA,BR_TEL,VAZECI_FLEG) 
+VALUES ((SELECT ID_KLIJENTA FROM KLIJENTI WHERE EMAIL_KORISNIKA = 'kupac@gmail.com'), '065555555', 1);
+
+INSERT INTO BR_TEL_KLIJENATA (ID_KLIJENTA,BR_TEL,VAZECI_FLEG) 
+VALUES ((SELECT ID_KLIJENTA FROM KLIJENTI WHERE EMAIL_KORISNIKA = 'prodavac@gmail.com'), '065666666', 1);
+
+INSERT INTO BR_TEL_KLIJENATA (ID_KLIJENTA,BR_TEL,VAZECI_FLEG) 
+VALUES ((SELECT ID_KLIJENTA FROM KLIJENTI WHERE EMAIL_KORISNIKA = 'kupac-prodavac@gmail.com'), '065777777', 1);
+
+INSERT INTO BR_TEL_KLIJENATA (ID_KLIJENTA,BR_TEL,VAZECI_FLEG) 
+VALUES ((SELECT ID_KLIJENTA FROM KLIJENTI WHERE EMAIL_KORISNIKA = 'kupac-prodavac@gmail.com'), '065999999', 1);
+
+
+
+
+INSERT INTO BR_TEL_ZAPOSLENIH (ID_ZAPOSLENOG,BR_TEL,VAZECI_FLEG)
+VALUES ((SELECT ID_ZAPOSLENOG FROM ZAPOSLENI WHERE EMAIL_ZAPOSLENOG = 'zaposleni@gmail.com'),'063655454', 1);
+
+
+
+INSERT INTO ZAPOSLENI (EMAIL_ZAPOSLENOG,PASSWORD_ZAPOSLENOG, ADMIN_FLEG)
+VALUES('admin@gmail.com','123456', 1);
+
+INSERT INTO ZAPOSLENI (EMAIL_ZAPOSLENOG,PASSWORD_ZAPOSLENOG,IME,PREZIME,STAZ, ADMIN_FLEG)
+VALUES('pera@gmail.com','123456','Pera', 'Peric', 10, 0);
+
+
+
+
+INSERT INTO NEKRETNINE (KVADRATURA,CENA,TIP,ID_UGOVORA_O_ZASTUPANJU,U_PONUDI_FLEG,
+                        GRAD,LOKACIJA,ULICA,BROJ,OPSTINA,BR_PARCELE,ID_AGENTA,ID_VLASNIKA,
+                        ZA_IZDAVANJE_FLEG,KRACI_PERIOD_FLEG)
+VALUES(50,25000,'prodaja',1,1,'Krusevac', 'Pejton', 'Vojvodjanska',
+        10, 'Krusevac', 26, (SELECT ID_ZAPOSLENOG FROM ZAPOSLENI WHERE EMAIL_ZAPOSLENOG='pera@gmail.com'),
+        (SELECT ID_KLIJENTA FROM KLIJENTI WHERE EMAIL_KORISNIKA = 'prodavac@gmail.com'), 0, 0);
+
+
+
+INSERT INTO NEKRETNINE (KVADRATURA,CENA,TIP,ID_UGOVORA_O_ZASTUPANJU,U_PONUDI_FLEG,
+                        GRAD,LOKACIJA,ULICA,BROJ,OPSTINA,BR_PARCELE,ID_AGENTA,ID_VLASNIKA,
+                        ZA_IZDAVANJE_FLEG,DUZI_PERIOD_FLEG,BR_MESECI,FIZICKA_PRAVNA_LICA_FLEG,KRACI_PERIOD_FLEG)
+VALUES(50,25000,'izdavanje',1,1,'Krusevac', 'Pejton', 'Vojvodjanska',
+        10, 'Krusevac', 26, (SELECT ID_ZAPOSLENOG FROM ZAPOSLENI WHERE EMAIL_ZAPOSLENOG='pera@gmail.com'),
+        (SELECT ID_KLIJENTA FROM KLIJENTI WHERE EMAIL_KORISNIKA = 'kupac-prodavac@gmail.com'), 0,1,24,1, 0);
+
+		
+
+
+		
+INSERT INTO UGOVOR(DAT_POTPISIVANJA,BONUS_AGENTU,NAKNADA_AGENCIJI,ID_NEKRETNINE,
+ID_AGENTA,ID_NOTARA,ID_ZASTUPNIKA_KUPCA,ID_ZASTUPNIKA_PRODAVCA,
+IZDAVANJE_FLEG,MESECNA_RENTA,KUPOPRODAJNI_FLEG,ID_KUPCA_ILI_ZAKUPCA,ID_PRODAVCA)
+VALUES(TO_DATE('2017/02/02 21:02:44', 'yyyy/mm/dd hh24:mi:ss'), 20, 50, 
+(SELECT ID_NEKRETNINE FROM NEKRETNINE WHERE TIP = 'izdavanje' AND ULICA = 'Vojvodjanska'),
+(SELECT ID_ZAPOSLENOG FROM ZAPOSLENI WHERE EMAIL_ZAPOSLENOG = 'pera@gmail.com'), 
+(SELECT ID_NOTARA FROM NOTAR WHERE IME='Neda'),
+(SELECT ID_ZASTUPNIKA FROM PRAVNI_ZASTUPNIK WHERE MAT_BR='1107995781010'),
+(SELECT ID_ZASTUPNIKA FROM PRAVNI_ZASTUPNIK WHERE MAT_BR='1107995785555'),
+1, 150, 0, (SELECT ID_KLIJENTA FROM KLIJENTI WHERE EMAIL_KORISNIKA = 'kupac@gmail.com'),
+ (SELECT ID_VLASNIKA FROM NEKRETNINE WHERE TIP = 'izdavanje' AND ULICA = 'Vojvodjanska')
+);
