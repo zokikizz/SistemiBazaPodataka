@@ -17,5 +17,10 @@ namespace SistemiBazaPodataka.Entiteti
         {
             Ugovori = new List<ugovor>();
         }
+
+        public override string ToString()
+        {
+            return Ime + " " + Prezime;
+        }
     }
 }

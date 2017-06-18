@@ -572,7 +572,7 @@
             this.grOpsteONekretnini.Controls.Add(this.lbBrParcele);
             this.grOpsteONekretnini.Location = new System.Drawing.Point(6, 20);
             this.grOpsteONekretnini.Name = "grOpsteONekretnini";
-            this.grOpsteONekretnini.Size = new System.Drawing.Size(295, 192);
+            this.grOpsteONekretnini.Size = new System.Drawing.Size(295, 195);
             this.grOpsteONekretnini.TabIndex = 35;
             this.grOpsteONekretnini.TabStop = false;
             this.grOpsteONekretnini.Text = "Opste:";

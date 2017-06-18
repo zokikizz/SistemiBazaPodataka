@@ -16,7 +16,7 @@ namespace Prodavnica.Mapiranja
             Id(x => x.Id, "ID_FOTO").GeneratedBy.TriggerIdentity();
 
 
-            Map(x => x.Path, "FOTO_PATH");
+            Map(x => x.foto, "FOTO_BLOB");
 
             References(x => x.Pripada).Column("ID_NEKRETNINE").LazyLoad();
         }

@@ -26,6 +26,10 @@ namespace SistemiBazaPodataka.Entiteti
         {
             KlijetiKojeZastupa = new List<zastupa>();
         }
-        
+
+        public override string ToString()
+        {
+            return Ime + " " + Prezime;
+        }
     }
 }

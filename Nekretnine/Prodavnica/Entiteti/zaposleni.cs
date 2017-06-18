@@ -31,6 +31,11 @@ namespace SistemiBazaPodataka.Entiteti
         {
             BrojeviTelefona = new List<zaposleniTelefon>();
         }
+
+        public override string ToString()
+        {
+            return Ime + " " + Prezime ;
+        }
     }
 
     public class admin : zaposleni

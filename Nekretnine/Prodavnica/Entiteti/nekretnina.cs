@@ -39,6 +39,11 @@ namespace SistemiBazaPodataka.Entiteti
             Fotografije = new List<fotografija>();
         }
 
+        public override string ToString()
+        {
+            return  Grad + " " + Lokacija + " " + Ulica + " " + Broj;
+        }
+
 
     }
 
@@ -52,6 +57,11 @@ namespace SistemiBazaPodataka.Entiteti
             
             Tip_Ponude = "izdavanje";
         }
+
+        public override string ToString()
+        {
+            return Grad + " " + Lokacija + " " + Ulica;
+        }
     }
 
     public class duzi_period : nekretnina
@@ -62,6 +72,11 @@ namespace SistemiBazaPodataka.Entiteti
         {
              //ovo ispravi u bazi da bude nullable ovde treba da se setuje BR_MESECI, a ne u caletovoj klasi ispravi!!!
             Tip_Ponude = "izdavanje";
+        }
+
+        public override string ToString()
+        {
+            return Grad + " " + Lokacija + " " + Ulica;
         }
     }
 }

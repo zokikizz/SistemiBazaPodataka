@@ -72,8 +72,8 @@ namespace Prodavnica
                 k.LicneNekretnine.Add(nek);
                 nek.Agent = agent;
                 nek.Vlasnik = k;
-                fotografija f = new fotografija() { Path = "url" };
-                nek.Fotografije.Add(f);
+                //fotografija f = new fotografija() { Path = "url" };
+                //nek.Fotografije.Add(f);
                 s.SaveOrUpdate(k);
                 s.Flush();
                 s.Close();
@@ -225,10 +225,10 @@ namespace Prodavnica
                 nek = s.QueryOver<nekretnina>().
                     Where(x => x.Vlasnik == ((s.QueryOver<klijenti>().Where(klij => klij.Email == "zokikizz")).List()[0]))
                     .List()[0];
-                fotografija f = new fotografija() { Path = "url" };
+                //fotografija f = new fotografija() { Path = "url" };
 
-                nek.Fotografije.Add(f);
-                f.Pripada = nek;
+                //nek.Fotografije.Add(f);
+               // f.Pripada = nek;
 
                 s.SaveOrUpdate(nek);
                 s.Flush();
@@ -650,7 +650,7 @@ namespace Prodavnica
                     n.Kvadratura = Int32.Parse(tbKvadratura.Text);
                     n.Id_Ugovora_O_Zastupanju = Int32.Parse(tbIdUgovoraOZastupanju.Text);
                     n.Grad = tbGradNekretnine.Text;
-                    n.Broj = Int32.Parse(tbBrojUUliciNekretnine.Text);
+                    n.Broj = Int32.Parse(tbBrojUUlici.Text);
                     n.Cena = Int32.Parse(tbCena.Text);
                     n.Datum_Izgradnje = DateTime.Now;
                     //n.Tip_Izdavanja = "kraci";

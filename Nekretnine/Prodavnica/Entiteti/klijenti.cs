@@ -37,5 +37,13 @@ namespace SistemiBazaPodataka.Entiteti
             brojeviTelefona = new List<klijentTelefon>();
             pravniZastupnici = new List<zastupa>();
         }
+
+
+        public override string ToString()
+        {
+            return Ime + " " + Prezime;
+        }
+
+
     }
 }

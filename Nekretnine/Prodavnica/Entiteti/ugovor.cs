@@ -28,6 +28,11 @@ namespace SistemiBazaPodataka.Entiteti
         public virtual float Naknada_notaru { get; set; }
         public virtual float MesecnaRenta { get; set; }
 
+        public override string ToString()
+        {
+            return this.Datum_Potpisivanja.ToLongDateString();
+        }
+
 
     }
 
