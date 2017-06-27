@@ -41,7 +41,7 @@ namespace SistemiBazaPodataka.Entiteti
         public virtual float Osnovna_cena { get; set; }
         public kupoprodajni_ugovor()
         {
-
+            
         }
     }
 
